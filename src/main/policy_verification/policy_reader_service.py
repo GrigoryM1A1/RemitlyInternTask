@@ -8,19 +8,14 @@ class PolicyReaderService:
             with open(path) as json_file:
                 policy = json.load(json_file)
         except FileNotFoundError:
-            print("[ERROR] Given file not found")
-            return {}
+            raise FileNotFoundError("[ERROR] Given file not found")
         except PermissionError:
-            print(f"[ERROR] You have no permission to this file {path}")
-            return {}
-        except json.decoder.JSONDecodeError:
-            print("[ERROR] Failed to decode the file")
-            return {}
+            raise PermissionError(f"[ERROR] You have no permission to this file {path}")
+        except json.decoder.JSONDecodeError as e:
+            raise json.decoder.JSONDecodeError("[ERROR] Failed to decode the file", e.doc, e.pos)
         except OSError:
-            print(f"[ERROR] Could not open file with given path {path}")
-            return {}
+            raise OSError(f"[ERROR] Could not open file with given path {path}")
         except Exception as e:
-            print(f"[ERROR] Unpredicted error occured: {e}")
-            return {}
+            raise Exception(f"[ERROR] Unpredicted error occured: {e}")
         
         return policy

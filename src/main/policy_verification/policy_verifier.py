@@ -1,4 +1,3 @@
-from policy_verification.policy_reader_service import PolicyReaderService
 import re
 
 
@@ -10,15 +9,12 @@ class PolicyVerifier:
     resource_key: str = "Resource"
     policy_name_pattern: str = r"[\w+=,.@-]+"
 
-    def __init__(self, absolute_path: str) -> None:
+    def __init__(self, absolute_path: str, policyReaderService) -> None:
         self.path: str = absolute_path
-        self.policy_reader: PolicyReaderService = PolicyReaderService()
+        self.policy_reader = policyReaderService
         self.policy: dict = self.policy_reader.read_policy_from_json(self.path)
 
     def verify(self) -> bool:
-        if not self.policy:
-            raise OSError("[ERROR] Failed to load the given file")
-        
         if self.policy.keys() != {self.name_key, self.document_key}:
             raise KeyError(f"[ERROR] Policy must have these keys: {self.name_key} and {self.document_key}")
 
@@ -31,7 +27,7 @@ class PolicyVerifier:
         name = self.policy[self.name_key]
 
         if not isinstance(name, str):
-            raise ValueError("PolicyName must be string")
+            raise TypeError("PolicyName must be string")
         
         if not re.fullmatch(self.policy_name_pattern, name):
             raise ValueError("PolicyName must have this pattern: [\w+=,.@-]+")
@@ -62,8 +58,15 @@ class PolicyVerifier:
         else: raise TypeError(f"[ERROR] Statement must be one of these types: dict or list")
     
     def verify_single_statement(self, statement: dict) -> bool:
-        if self.resource_key in statement and statement[self.resource_key] == "*":
-            return False
+        if self.resource_key in statement and isinstance(statement[self.resource_key], str):
+            if statement[self.resource_key] == "*":
+                return False 
+
+        if self.resource_key in statement and isinstance(statement[self.resource_key], list):
+            for res in statement[self.resource_key]:
+                if res == "*":
+                    return False
+
         return True
 
     def verify_multiple_statements(self, statements: list) -> bool:
