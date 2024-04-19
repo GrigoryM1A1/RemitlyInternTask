@@ -12,7 +12,7 @@ Some assumptions I made because task was very general in my opinion:
 - If "Statement" is of type list and there is at least one statement in the list with "Resource": "*" False is returned
 - If file doesn't have a proper structure an error is raised and printed in terminal and no boolean value is returned
 - By proper structure I mean (based on documentation):
-  - JSON contains keys: "PolicyName" and "PolicyDocument"
+  - JSON has only two main keys: "PolicyName" and "PolicyDocument"
   - PolicyDocument contains keys: "Version" and "Statement"
   - Statement is either a list of documents or a single document
   - Resource is either a single string or list of strings
@@ -34,12 +34,12 @@ Python 3.11 installed
 - In the terminal run <br> `python demo.py`
 - The program demo now will ask you to pass an absolute path to the policy json file and
   all you have to do is pass the path you want and click `Enter`. <br>
-  - If error occurs it will be printed to the terminal and False will be returned. <br>
-  - If json doesn't fulfill requirements False will be returned and printed. <br>
-  - If verification was successful True will be returned and printed.
+  - If error occurs it will be printed to the terminal <br>
+  - If json doesn't fulfill requirements False will be returned and printed <br>
+  - If verification was successful True will be returned and printed
 
 ## How to run tests
-- Firstly, make sure that you have virtual environment active
+- Firstly, make sure that you have virtual environment still active
 - Navigate to `/RemitlyInternTask`
 - In terminal run command: `python -m unittest`
 
